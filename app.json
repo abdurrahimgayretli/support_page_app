@@ -1,27 +1,28 @@
 {
   "expo": {
-    "name": "support-page-app",
-    "slug": "support-page-app",
+    "name": "support_page_app",
+    "slug": "support_page_app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": ["expo-image-picker"],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },
+
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.abdurrahimgayretli.support_page_app"
     },
     "web": {
       "favicon": "./assets/favicon.png"

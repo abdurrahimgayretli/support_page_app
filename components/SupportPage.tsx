@@ -186,7 +186,6 @@ export default function SupportPage({ navigation, route }: any) {
       // }
     } catch (error) {
       console.error("Error sending support message:", error);
-      
     }
   };
 
@@ -229,8 +228,36 @@ export default function SupportPage({ navigation, route }: any) {
       }
     })();
   }, []);
+
   useEffect(() => {
-    checkPermissions();
+    const getLoc = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "Permission required",
+            "Please grant location permission to get your current location."
+          );
+          return;
+        }
+
+        const location = await Location.getCurrentPositionAsync();
+        const locDetails = await Location.reverseGeocodeAsync(location.coords);
+        setLocation({
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude,
+        }); // Erişim koordinatlarına atıyoruz
+        setLocationText(locDetails[0].city + "/" + locDetails[0].country);
+      } catch (error) {
+        console.error("Error getting user location:", error);
+        setLocation({
+          latitude: 0,
+          longitude: 0,
+        });
+        setLocationText("Failed to get location");
+      }
+    };
+    getLoc();
   }, []);
 
   useEffect(() => {

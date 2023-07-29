@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { View, Text } from "react-native";
+import { View, Text, Button, Pressable } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import InputArea from "./InputArea";
 
 const QRScannerScreen = ({ navigation }: any) => {
   const [hasPermission, setHasPermission] = useState<boolean | null>(null);
+  const [qrCode, setQrCode] = useState<string>("");
   const [scanned, setScanned] = useState(false);
+
+  const handleChangeText = (text: string) => {
+    setQrCode(text);
+  };
 
   useEffect(() => {
     (async () => {
@@ -13,11 +19,7 @@ const QRScannerScreen = ({ navigation }: any) => {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({
-    data,
-  }: {
-    data: string;
-  }) => {    
+  const handleBarCodeScanned = ({ data }: { data: string }) => {
     setScanned(true);
     navigation.navigate("SupportPage", { qrCode: data });
   };
@@ -30,11 +32,30 @@ const QRScannerScreen = ({ navigation }: any) => {
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View className="flex-1">
       <BarCodeScanner
-        style={{ flex: 1 }}
+        className="flex-1"
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
-      />
+      >
+        <View className="w-[50%] self-center flex-row justify-center items-center">
+          <InputArea
+            onChangeText={handleChangeText}
+            value={qrCode}
+            placeholder="Write QR Code"
+            type="writeQR"
+            src={require("../assets/qr-code.png")}
+          />
+          <Pressable
+            className={
+              "w-10 mt-6 h-[7vh] ml-2 bg-green-500 rounded-lg justify-center items-center"
+            }
+            onPress={() => {
+              navigation.navigate("SupportPage", { qrCode: qrCode })}}
+          >
+            <Text className="text-white">OK</Text>
+          </Pressable>
+        </View>
+      </BarCodeScanner>
     </View>
   );
 };

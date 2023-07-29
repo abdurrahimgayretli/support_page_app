@@ -229,6 +229,10 @@ export default function SupportPage({ navigation, route }: any) {
     })();
   }, []);
 
+   useEffect(() => {
+    checkPermissions();
+  }, []);
+
   useEffect(() => {
     const getLoc = async () => {
       try {

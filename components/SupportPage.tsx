@@ -120,10 +120,12 @@ export default function SupportPage({ navigation, route }: any) {
     };
 
     const data = await fileManager.upload(params).promise();
+
     return data.Location;
   };
 
   const handleSendMessage = async () => {
+    setSentCheck(true);
     if (qrCode === "" || location.latitude === 0 || !photoUri) {
       setSentCheck(false);
       Alert.alert("Missing Information", "Please fill in all required fields.");
@@ -144,8 +146,6 @@ export default function SupportPage({ navigation, route }: any) {
       setLocationText("Your Location");
       setPhotoUri(null);
       setComment("");
-
-      Alert.alert("Success", "Your support message has been sent.");
     }
 
     const apiData = {
@@ -173,17 +173,17 @@ export default function SupportPage({ navigation, route }: any) {
         phoneNumber: "5555555555",
         authCode: "testCode",
       };
-      await fetch(url, {
+      const response = await fetch(url, {
         method: "POST",
         headers: headers,
         body: JSON.stringify(apiData),
       });
 
-      // if (response.ok) {
-      //   Alert.alert("Success", "Your support message has been sent.");
-      // } else {
-      //   Alert.alert("Error", "Failed to send support message.");
-      // }
+      if (response.ok) {
+        Alert.alert("Success", "Your support message has been sent.");
+      } else {
+        Alert.alert("Error", "Failed to send support message.");
+      }
     } catch (error) {
       console.error("Error sending support message:", error);
     }
@@ -218,6 +218,12 @@ export default function SupportPage({ navigation, route }: any) {
   };
 
   useEffect(() => {
+    if (sentCheck) {
+      handleSendMessage();
+    }
+  }, [sentCheck]);
+
+  useEffect(() => {
     (async () => {
       const { status } = await BarCodeScanner.requestPermissionsAsync();
       if (status !== "granted") {
@@ -229,7 +235,7 @@ export default function SupportPage({ navigation, route }: any) {
     })();
   }, []);
 
-   useEffect(() => {
+  useEffect(() => {
     checkPermissions();
   }, []);
 
@@ -333,10 +339,7 @@ export default function SupportPage({ navigation, route }: any) {
           className={`w-full h-[7vh] ${
             !sentCheck ? "bg-pink-500" : "bg-green-400"
           }  rounded-lg justify-center items-center flex-row`}
-          onPress={() => {
-            setSentCheck(true);
-            handleSendMessage();
-          }}
+          onPress={() => setSentCheck(true)}
         >
           <Text className="text-white">Send</Text>
           {sentCheck && (

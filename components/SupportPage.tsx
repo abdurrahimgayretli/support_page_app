@@ -6,6 +6,7 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  TouchableWithoutFeedback,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { Camera } from "expo-camera";
@@ -42,6 +43,8 @@ export default function SupportPage({ navigation, route }: any) {
   ]);
 
   const [sentCheck, setSentCheck] = useState(false);
+
+  const [scrollRef, setScrollRef] = useState<ScrollView>();
 
   const handleReportText = (i: number) => {
     const updateItems = [...reportText];
@@ -285,7 +288,11 @@ export default function SupportPage({ navigation, route }: any) {
   return (
     <View className="bg-gray-700 h-full items-center">
       <View className="w-[90%] h-[90%]">
-        <ScrollView>
+        <ScrollView
+          ref={(ref) => {
+            setScrollRef(ref || scrollRef);
+          }}
+        >
           <InputArea
             value={locationText}
             onChangeText={handleChangeText}
@@ -302,16 +309,15 @@ export default function SupportPage({ navigation, route }: any) {
             src={require("../assets/qr-code.png")}
           />
           <View className="flex-row justify-between mt-5 h-[20vh]">
-            <View
-              className="w-[35%] bg-pink-500 rounded-xl justify-center items-center"
-              onTouchStart={handleTakePhoto}
-            >
-              <Image
-                className="w-10 h-10"
-                tintColor={"white"}
-                source={require("../assets/camera.png")}
-              />
-            </View>
+            <TouchableWithoutFeedback onPress={handleTakePhoto}>
+              <View className="w-[35%] bg-pink-500 rounded-xl justify-center items-center">
+                <Image
+                  className="w-10 h-10"
+                  tintColor={"white"}
+                  source={require("../assets/camera.png")}
+                />
+              </View>
+            </TouchableWithoutFeedback>
             <View className="w-[60%] h-full bg-pink-500 rounded-xl grid grid-cols-3 p-4 justify-around">
               {reportText.map(
                 (report: { text: string; select: boolean }, i: number) => (
@@ -326,26 +332,32 @@ export default function SupportPage({ navigation, route }: any) {
               )}
             </View>
           </View>
-          <InputArea
-            onChangeText={handleChangeComment}
-            value={comment}
-            placeholder="Please write comment"
-            type="area"
-          />
+          <View
+            onTouchEnd={() => {
+              scrollRef?.scrollToEnd()
+            }}
+          >
+            <InputArea
+              onChangeText={handleChangeComment}
+              value={comment}
+              placeholder="Please write comment"
+              type="area"
+            />
+          </View>
           <View style={{ height: 30 }} />
+          <Pressable
+            disabled={sentCheck}
+            className={`w-full h-[7vh] ${
+              !sentCheck ? "bg-pink-500" : "bg-green-400"
+            }  rounded-lg justify-center items-center flex-row`}
+            onPress={() => setSentCheck(true)}
+          >
+            <Text className="text-white">Send</Text>
+            {sentCheck && (
+              <ActivityIndicator color={"#0000ff"} className="pl-2" />
+            )}
+          </Pressable>
         </ScrollView>
-        <Pressable
-          disabled={sentCheck}
-          className={`w-full h-[7vh] ${
-            !sentCheck ? "bg-pink-500" : "bg-green-400"
-          }  rounded-lg justify-center items-center flex-row`}
-          onPress={() => setSentCheck(true)}
-        >
-          <Text className="text-white">Send</Text>
-          {sentCheck && (
-            <ActivityIndicator color={"#0000ff"} className="pl-2" />
-          )}
-        </Pressable>
       </View>
     </View>
   );

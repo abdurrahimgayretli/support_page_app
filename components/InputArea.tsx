@@ -30,10 +30,11 @@ const InputArea = ({
         value={value}
         multiline={type === "area"}
         className={`flex-1 ${
-          type !== "area" ? "w-[90%] pr-2" : "pt-2"
+          type !== "area" ? "w-[90%] pr-2" : "pt-2 h-full"
         } text-white`}
         placeholderTextColor={"white"}
         placeholder={placeholder}
+        textAlignVertical={type === "area" ? "top" : "auto"}
       />
       {type !== "area" && (
         <View className="h-8 w-8 self-center" onTouchStart={handleSubmit}>
